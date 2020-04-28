@@ -1,0 +1,81 @@
+ID: MTA_Project_EL1
+_schema-version: '2.1'
+description: MTA_Project Eduardo Linares
+parameters:
+  deploy_mode: html5-repo
+version: 0.0.1
+modules:
+  - name: mta-project-el1-approuter
+    type: approuter.nodejs
+    path: mta-project-el1-approuter
+    parameters:
+      disk-quota: 256M
+      memory: 256M
+    requires:
+      - name: MTA_Project_EL1_html5_repo_runtime
+      - name: eduardo-linares
+      - name: uaa_MTA_Project_EL1
+      - name: portal_resources_MTA_Project_EL1
+  - name: MTA_Project_EL1_ui_deployer
+    type: com.sap.html5.application-content
+    path: MTA_Project_EL1_ui_deployer
+    requires:
+      - name: MTA_Project_EL1_html5_repo_host
+    build-parameters:
+      requires:
+        - name: TRAVEL_APP_EL1
+          artifacts:
+            - './*'
+          target-path: resources/TRAVEL_APP_EL1
+  - name: TRAVEL_APP_EL1
+    type: html5
+    path: TRAVEL_APP_EL1
+    build-parameters:
+      builder: custom
+      commands:
+        - npm install
+        - npm run build
+      supported-platforms: []
+      build-result: dist
+  - name: FLP_Site_Module_EL1
+    type: com.sap.portal.content
+    path: FLP_Site_Module_EL1
+    parameters:
+      stack: cflinuxfs3
+      memory: 128M
+      buildpack: 'https://github.com/cloudfoundry/nodejs-buildpack/releases/download/v1.6.39/nodejs-buildpack-cflinuxfs3-v1.6.39.zip'
+    requires:
+      - name: portal_resources_MTA_Project_EL1
+      - name: uaa_MTA_Project_EL1
+      - name: MTA_Project_EL1_html5_repo_host
+      - name: MTA_Project_EL1_ui_deployer
+resources:
+  - name: MTA_Project_EL1_html5_repo_runtime
+    parameters:
+      service-plan: app-runtime
+      service: html5-apps-repo
+    type: org.cloudfoundry.managed-service
+  - name: MTA_Project_EL1_html5_repo_host
+    parameters:
+      service-plan: app-host
+      service: html5-apps-repo
+    type: org.cloudfoundry.managed-service
+  - name: eduardo-linares
+    parameters:
+      service-name: eduardo-linares
+      protocol:
+        - ODataV2
+      service: abap-trial
+      service-plan: shared
+    type: org.cloudfoundry.existing-service
+  - name: uaa_MTA_Project_EL1
+    parameters:
+      path: ./xs-security.json
+      service-plan: application
+      service: xsuaa
+    type: org.cloudfoundry.managed-service
+  - name: portal_resources_MTA_Project_EL1
+    parameters:
+      service-plan: standard
+      service: portal
+    type: org.cloudfoundry.managed-service
