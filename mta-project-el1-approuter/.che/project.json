@@ -1,1 +1,15 @@
-{"type":"approuter.nodejs","builders":{"default":"sap.nodejs","configs":{}},"runners":{"configs":{}},"attributes":{},"description":"mta-project-el1-approuter","mixinTypes":["mtamodule"]}
+{
+    "type": "approuter.nodejs",
+    "builders": {
+        "default": "sap.nodejs",
+        "configs": {}
+    },
+    "runners": {
+        "configs": {}
+    },
+    "attributes": {},
+    "description": "mta-project-el1-approuter",
+    "mixinTypes": [
+        "mtamodule"
+    ]
+}
